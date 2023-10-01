@@ -4,7 +4,11 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from sqlalchemy import CheckConstraint
 
+#Create an SQLAlchemy instance.
+
 db = SQLAlchemy()
+
+#Create the hero table.
 
 class Hero(db.Model):
     __tablename__ = 'heroes'
@@ -17,6 +21,7 @@ class Hero(db.Model):
 
     powers = db.relationship('Powers', secondary='hero_powers', back_populates='heroes')
 
+#Create the powers table.
 
 class Powers(db.Model):
     __tablename__ = 'powers'
@@ -36,6 +41,7 @@ class Powers(db.Model):
         ),
     )
 
+#Create the hero_powers table
 
 class Hero_Powers(db.Model):
     __tablename__ = 'hero_powers'

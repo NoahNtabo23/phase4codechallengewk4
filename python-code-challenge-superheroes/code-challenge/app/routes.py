@@ -2,12 +2,13 @@ from flask import jsonify, request, abort
 from models import db
 from models import Hero, Powers, Hero_Powers
 from flask_restful import Resource
-
+#Get  all heroes.
 class HeroesResource(Resource):
     def get(self):
         heroes = Hero.query.all()
         return jsonify([{'id': hero.id, 'name': hero.name, 'super_name': hero.super_name} for hero in heroes])
-
+    
+#Get the heroes with id.
 class HeroResource(Resource):
     def get(self, id):
         hero = Hero.query.get(id)
@@ -15,19 +16,22 @@ class HeroResource(Resource):
             abort(404, error='Hero not found')
         powers = [{'id': power.id, 'name': power.name, 'description': power.description} for power in hero.powers]
         return jsonify({'id': hero.id, 'name': hero.name, 'super_name': hero.super_name, 'powers': powers})
-
+    
+#Get all the powers.
 class PowersResource(Resource):
     def get(self):
         powers = Powers.query.all()
         return jsonify([{'id': power.id, 'name': power.name, 'description': power.description} for power in powers])
-
+    
+#Get all the powers with id.
 class PowerResource(Resource):
     def get(self, id):
         power = Powers.query.get(id)
         if not power:
             abort(404, error='Power not found')
         return jsonify({'id': power.id, 'name': power.name, 'description': power.description})
-
+    
+#perform patch on a particular resource.
 class UpdatePowerResource(Resource):
     def patch(self, id):
         power = Powers.query.get(id)
@@ -39,7 +43,8 @@ class UpdatePowerResource(Resource):
         power.description = data['description']
         db.session.commit()
         return jsonify({'id': power.id, 'name': power.name, 'description': power.description})
-
+    
+#ADD DATA TO HERO POWERS TABLE.
 class HeroPowersResource(Resource):
     def post(self):
         data = request.get_json()
