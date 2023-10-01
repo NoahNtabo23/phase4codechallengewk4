@@ -2,6 +2,7 @@
 
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from sqlalchemy import CheckConstraint
 
 db = SQLAlchemy()
 
@@ -22,11 +23,18 @@ class Powers(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True)
-    description = db.Column(db.String, unique=True)
+    description = db.Column(db.String, unique=True, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    heroes = db.relationship('Hero', secondary='hero_powers', back_populates='powers')
+    heroes = db.relationship('Hero', secondary='hero_powers', back_populates='powers', lazy='dynamic')
+
+    __table_args__ = (
+        CheckConstraint(
+            db.func.length(description) >= 20,
+            name='description_length'
+        ),
+    )
 
 
 class Hero_Powers(db.Model):
@@ -41,3 +49,10 @@ class Hero_Powers(db.Model):
 
     hero = db.relationship('Hero', backref='hero_powers')
     power = db.relationship('Powers', backref='hero_powers')
+
+    __table_args__ = (
+        CheckConstraint(
+            strength.in_(['Strong', 'Weak', 'Average']),
+            name='strength_values'
+        ),
+    )
