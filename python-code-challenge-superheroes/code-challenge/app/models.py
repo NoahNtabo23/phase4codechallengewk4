@@ -1,10 +1,43 @@
+# models.py
+
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 db = SQLAlchemy()
 
 class Hero(db.Model):
-    __tablename__ = 'hero'
+    __tablename__ = 'heroes'
 
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True)
+    super_name = db.Column(db.String, unique=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-# add any models you may need. 
+    powers = db.relationship('Powers', secondary='hero_powers', back_populates='heroes')
+
+
+class Powers(db.Model):
+    __tablename__ = 'powers'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True)
+    description = db.Column(db.String, unique=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    heroes = db.relationship('Hero', secondary='hero_powers', back_populates='powers')
+
+
+class Hero_Powers(db.Model):
+    __tablename__ = 'hero_powers'
+
+    id = db.Column(db.Integer, primary_key=True)
+    strength = db.Column(db.String, unique=True)
+    hero_id = db.Column(db.Integer, db.ForeignKey('heroes.id'))
+    power_id = db.Column(db.Integer, db.ForeignKey('powers.id'))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    hero = db.relationship('Hero', backref='hero_powers')
+    power = db.relationship('Powers', backref='hero_powers')
