@@ -31,4 +31,4 @@ api.add_resource(HeroPowersResource, '/hero_powers')
 
 #Run the application
 if __name__ == '__main__':
-    app.run(port=5555)
+    app.run(port=3000)
